@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Fourier Transform Square Wave</title>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(event) { 
+
+ 	const CWIDE = 800;
+	const CHIGH = 800;
+	const PI = Math.PI;
+	const TWOPI = 2 * Math.PI;
+
+	let canvas=document.getElementById("fourier");
+	let ctx=canvas.getContext("2d");
+
+	// move center to center of canvas
+	ctx.translate(200, CHIGH/2);
+
+	let time=0;
+	let wave = [];
+
+
+	function main() {
+		requestAnimationFrame(main);
+
+		// Clear the canvas
+		ctx.clearRect(-200,-CHIGH/2, CWIDE,CHIGH);
+		
+
+		// Line Style
+        ctx.lineWidth = 1;
+
+		let x = 0;
+		let y = 0;
+
+		for(let i=0; i<10; ++i) {
+
+			let prevx = x;
+			let prevy = y;
+
+			let n = i * 2 + 1; 
+			let radius = 100 * (4 / (n * PI));
+			x += radius * Math.cos(n * time);
+			y += radius * Math.sin(n * time);
+		
+			// Draw Circle
+			ctx.strokeStyle = '#e0e0e0';
+			ctx.beginPath();
+			ctx.arc(prevx,prevy,radius,0,TWOPI);
+			ctx.stroke();
+
+			// Draw Line to x,y
+			ctx.strokeStyle = '#000000';
+			ctx.beginPath();
+			ctx.moveTo(prevx, prevy);
+			ctx.lineTo(x, y);
+			ctx.stroke();
+		}
+
+		// save final y val
+		wave.unshift(y);
+		if (wave.length > 450) wave.pop();
+
+		// draw path of y values.
+		ctx.beginPath();
+		ctx.moveTo(x, y);
+		ctx.lineTo(150, wave[0]);
+		for(let i=0; i<wave.length;++i) {
+		 	ctx.lineTo(150+i, wave[i]);
+		}
+		ctx.stroke();
+
+		time += 0.05;
+
+	}
+
+    main();	
+});
+</script>
+
+</head>
+<body>
+
+<canvas id="fourier" width=800 height=800></canvas>
+
+</body>
+</html>

@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Discrete Fourier Transform Arbitrary Signal</title>
+<style>
+	body {
+		background-color: #000;
+	}
+	#fourier {
+		margin:0 auto;
+		background-color: #025;
+		display: block;
+	}
+</style>
+
+<script src="ydata.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function(event) { 
+
+	const TWOPI = 2 * Math.PI;
+
+ 	const CWIDE = 800;
+	const CHIGH = 800;
+
+	const canvas=document.getElementById("fourier");
+	const ctx=canvas.getContext("2d");
+
+	let background = new Image();
+	background.src = "y.png";
+
+
+	let time=0;
+	let path = [];
+
+	let data = [];
+	data = drawY();
+
+	// for(let i=0;i<ydata.length;++i) {
+	// 	let re = ydata[i].x;
+	// 	let im = ydata[i].y;
+	// 	data.push({re,im});
+	// }
+	
+	let fourierData = discreteFourierTransform(data);
+	fourierData.sort((a,b) => b.amp - a.amp);
+
+	// https://en.wikipedia.org/wiki/Discrete_Fourier_transform
+	function discreteFourierTransform(x) {
+		let X = [];
+		const N = x.length;
+		for(let k=0; k<N; ++k) {
+			let sum = {re:0,im:0};
+			for(let n=0; n<N; ++n) {
+				let theta = (TWOPI * k * n) / N; 
+				let c = {re: Math.cos(theta), im: -1 * Math.sin(theta)};
+				sum.re += x[n].re * c.re - x[n].im * c.im;
+				sum.im += x[n].re * c.im + x[n].im * c.re;
+			}
+			sum.re = sum.re / N;
+			sum.im = sum.im / N;
+			let freq = k;
+			let amp = Math.sqrt(sum.re*sum.re+sum.im*sum.im);
+			let phase = Math.atan2(sum.im, sum.re);
+			X[k] = {re:sum.re,im:sum.im,freq,amp,phase};
+		}
+		return X;
+	}
+
+
+	function epicycles(x,y,fourier)	{
+		for(let i=0; i<fourier.length; ++i) {
+			let cntrX = x;
+			let cntrY = y;
+			let freq = fourier[i].freq;
+			let phase = fourier[i].phase;
+			let radius = fourier[i].amp;
+			x += radius * Math.cos(freq * time + phase);
+			y += radius * Math.sin(freq * time + phase);
+	
+			ctx.lineWidth = 1;
+
+			// Draw Circle
+			ctx.beginPath();
+			ctx.arc(cntrX,cntrY,radius,0,TWOPI);
+			ctx.strokeStyle = '#444444';
+			ctx.stroke();
+
+			// Draw Line to x,y
+			ctx.beginPath();
+			ctx.moveTo(cntrX, cntrY);
+			ctx.lineTo(x, y);
+			ctx.strokeStyle = '#888888';
+			ctx.stroke();
+		}
+		return {x,y};
+	}
+
+
+	function main() {
+		requestAnimationFrame(main);
+ 
+		// Clear the canvas
+		ctx.clearRect(0,0, canvas.width, canvas.height);
+		//ctx.drawImage(background,0,8, 800,800); 
+
+		let v = epicycles(CWIDE/2,CHIGH/2,fourierData);	
+		path.unshift(v);
+
+		// draw path
+		ctx.beginPath();
+		for(let i=0; i<path.length;++i) {
+		 	ctx.lineTo(path[i].x, path[i].y);
+		}
+		ctx.lineWidth = 2;
+		ctx.strokeStyle = '#ffff00';
+		ctx.stroke();
+
+		let dt = TWOPI / fourierData.length
+		time += dt;
+		if (time > TWOPI) {
+			path = [];
+			time = 0;
+		}
+
+	}
+
+    main();	
+
+    function drawY() {
+
+    	let yData = [];
+		let steps;
+		let start;
+
+		let fX;
+		let fY;
+		let tX;
+		let tY;
+
+		// OUTER
+		steps = 200;
+		start = 0.360;
+		for(let i=0;i<=steps;++i) {
+			let v = i * (TWOPI/steps) -start;
+			let re = 390 * Math.sin(v);
+			let im = 262 * Math.cos(v);
+
+			document.getElementById("output").value += "{ x: " +re+ ", y: " +im+ " },\n";
+			yData.push({re,im});
+		}
+
+		// INNER
+		steps = 200;
+		start = 0.360;
+		for(let i=0;i<=steps;++i) {
+			let v = i * (TWOPI/steps) -start;
+			let re = 365 * Math.sin(v);
+			let im = 235 * Math.cos(v);
+			document.getElementById("output").value += "{ x: " +re+ ", y: " +im+ " },\n";
+			yData.push({re,im});
+
+		}
+
+		// OUTER Y - bottom
+		steps = 100;
+		start = 0.360;
+		for(let i=0;i<=steps;++i) {
+			let v = i * ((TWOPI/8.43)/steps) -start;
+			let re = 330 * Math.sin(v);
+			let im = 196 * Math.cos(v);
+			document.getElementById("output").value += "{ x: " +re+ ", y: " +im+ " },\n";
+			yData.push({re,im});
+		}
+
+		// LINE
+		fX = 124.03737409623217; fY = 181.6277250209618;
+		tX = 109.6175651957163; tY = 128.39691519432472;
+		steps = 50;
+		for(let i=0;i<=steps;++i) {
+			re = fX + (i * (tX-fX)/steps);
+			im = fY + (i * (tY-fY)/steps);
+			document.getElementById("output").value += "{ x: " +re+ ", y: " +im+ " },\n";
+			yData.push({re,im});
+		}
+
+		// INNER Y - bottom right
+		steps = 50;
+		start = -0.41;
+		for(let i=0;i<=steps;++i) {
+			let v = -i * ((TWOPI/33)/steps) -start;
+			let re = 275 * Math.sin(v);
+			let im = 140 * Math.cos(v);
+			document.getElementById("output").value += "{ x: " +re+ ", y: " +im+ " },\n";
+			yData.push({re,im});
+		}
+
+		// LINE
+		fX = 59.905912329345924; fY = 136.63783925617415;
+		tX = 60; tY = 60;
+		steps = 50;
+		for(let i=0;i<=steps;++i) {
+			re = fX + (i * (tX-fX)/steps);
+			im = fY + (i * (tY-fY)/steps);
+			document.getElementById("output").value += "{ x: " +re+ ", y: " +im+ " },\n";
+			yData.push({re,im});
+		}
+
+		// LINE
+		fX = 60; fY = 60;
+		tX = 195.03863230538119; tY = -98.69660768739209;
+		steps = 70;
+		for(let i=0;i<=steps;++i) {
+			re = fX + (i * (tX-fX)/steps);
+			im = fY + (i * (tY-fY)/steps);
+			document.getElementById("output").value += "{ x: " +re+ ", y: " +im+ " },\n";
+			yData.push({re,im});
+		}
+
+		// INNER Y - top right outer
+		steps = 50;
+		start = 3.93;
+		for(let i=0;i<=steps;++i) {
+			let v = -i * ((TWOPI/25)/steps) -start;
+			let re = 275 * Math.sin(v);
+			let im = 140 * Math.cos(v);
+			document.getElementById("output").value += "{ x: " +re+ ", y: " +im+ " },\n";
+			yData.push({re,im});
+		}
+
+		// LINE
+		fX = 237.12422975673766; fY = -70.90285785011277;
+		tX = 268.12105778303476; tY = -114.26365670022278;
+		steps = 50;
+		for(let i=0;i<=steps;++i) {
+			re = fX + (i * (tX-fX)/steps);
+			im = fY + (i * (tY-fY)/steps);
+			document.getElementById("output").value += "{ x: " +re+ ", y: " +im+ " },\n";
+			yData.push({re,im});
+		}
+
+		// OUTER Y - Top right
+		steps = 100;
+		start = 4.090;
+		for(let i=0;i<=steps;++i) {
+			let v = i * ((TWOPI/9.4)/steps) -start;
+			let re = 330 * Math.sin(v);
+			let im = 196 * Math.cos(v);
+			document.getElementById("output").value += "{ x: " +re+ ", y: " +im+ " },\n";
+			yData.push({re,im});
+		}
+
+		// LINE
+		fX = 91.19209223547674; fY = -188.3677662490331;
+		tX = 84.78299215926154; tY = -133.18040444123335;
+		steps = 50;
+		for(let i=0;i<=steps;++i) {
+			re = fX + (i * (tX-fX)/steps);
+			im = fY + (i * (tY-fY)/steps);
+			document.getElementById("output").value += "{ x: " +re+ ", y: " +im+ " },\n";
+			yData.push({re,im});
+		}
+
+		// INNER Y - top right inner
+		steps = 50;
+		start = 3.455;
+		for(let i=0;i<=steps;++i) {
+			let v = -i * ((TWOPI/33)/steps) -start;
+			let re = 275 * Math.sin(v);
+			let im = 140 * Math.cos(v);
+			document.getElementById("output").value += "{ x: " +re+ ", y: " +im+ " },\n";
+			yData.push({re,im});
+		}
+
+		// LINE
+		fX = 132.75980481136858; fY = -122.60515140719707;
+		tX = 32; tY = 0;
+		steps = 70;
+		for(let i=0;i<=steps;++i) {
+			re = fX + (i * (tX-fX)/steps);
+			im = fY + (i * (tY-fY)/steps);
+			document.getElementById("output").value += "{ x: " +re+ ", y: " +im+ " },\n";
+			yData.push({re,im});
+		}
+
+		// LINE
+		fX = 32; fY = 0;
+		tX = -79.3198053124048; tY = -134.04989929731147;
+		steps = 70;
+		for(let i=0;i<=steps;++i) {
+			re = fX + (i * (tX-fX)/steps);
+			im = fY + (i * (tY-fY)/steps);
+			document.getElementById("output").value += "{ x: " +re+ ", y: " +im+ " },\n";
+			yData.push({re,im});
+		}
+
+		// INNER Y - top left inner
+		steps = 50;
+		start = 2.849;
+		for(let i=0;i<=steps;++i) {
+			let v = -i * ((TWOPI/38)/steps) -start;
+			let re = 275 * Math.sin(v);
+			let im = 140 * Math.cos(v);
+			document.getElementById("output").value += "{ x: " +re+ ", y: " +im+ " },\n";
+			yData.push({re,im});
+		}
+
+		// LINE
+		fX = -34.89820605856506; fY = -138.86812619159437;
+		tX = -40.02677416010782; tY = -194.55287647436367;
+		steps = 50;
+		for(let i=0;i<=steps;++i) {
+			re = fX + (i * (tX-fX)/steps);
+			im = fY + (i * (tY-fY)/steps);
+			document.getElementById("output").value += "{ x: " +re+ ", y: " +im+ " },\n";
+			yData.push({re,im});
+		}
+
+		// OUTER Y - Top left
+		steps = 100;
+		start = 3.020;
+		for(let i=0;i<=steps;++i) {
+			let v = i * ((TWOPI/7.5)/steps) -start;
+			let re = 330 * Math.sin(v);
+			let im = 196 * Math.cos(v);
+			document.getElementById("output").value += "{ x: " +re+ ", y: " +im+ " },\n";
+			yData.push({re,im});
+		}
+
+		// LINE
+		fX = -270.21027197612665; fY = -112.51414705525184;
+		tX = -238.07376905390518; tY = -70.07332712617422;
+		steps = 50;
+		for(let i=0;i<=steps;++i) {
+			re = fX + (i * (tX-fX)/steps);
+			im = fY + (i * (tY-fY)/steps);
+			document.getElementById("output").value += "{ x: " +re+ ", y: " +im+ " },\n";
+			yData.push({re,im});
+		}
+
+		// INNER Y - top left outer
+		steps = 50;
+		start = 2.095;
+		for(let i=0;i<=steps;++i) {
+			let v = -i * ((TWOPI/26)/steps) -start;
+			let re = 275 * Math.sin(v);
+			let im = 140 * Math.cos(v);
+			document.getElementById("output").value += "{ x: " +re+ ", y: " +im+ " },\n";
+			yData.push({re,im});
+		}
+
+
+		// LINE
+		fX = -198.2154042333766; fY = -97.0424672536357;
+		tX = -55; tY = 65;
+		steps = 70;
+		for(let i=0;i<=steps;++i) {
+			re = fX + (i * (tX-fX)/steps);
+			im = fY + (i * (tY-fY)/steps);
+			document.getElementById("output").value += "{ x: " +re+ ", y: " +im+ " },\n";
+			yData.push({re,im});
+		}
+
+		// LINE
+		fX = -55; fY = 65;
+		tX = -55.980968973813944; tY = 137.0685378327307;
+		steps = 50;
+		for(let i=0;i<=steps;++i) {
+			re = fX + (i * (tX-fX)/steps);
+			im = fY + (i * (tY-fY)/steps);
+			document.getElementById("output").value += "{ x: " +re+ ", y: " +im+ " },\n";
+			yData.push({re,im});
+		}
+
+		// INNER Y - bottom left
+		steps = 50;
+		start = 0.205;
+		for(let i=0;i<=steps;++i) {
+			let v = -i * ((TWOPI/33)/steps) -start;
+			let re = 275 * Math.sin(v);
+			let im = 140 * Math.cos(v);
+			document.getElementById("output").value += "{ x: " +re+ ", y: " +im+ " },\n";
+			yData.push({re,im});
+		}
+
+		// LINE
+		fX = -105.9236600828484; fY = 129.19798342459217;
+		tX = -116.25049698077969; tY = 183.43577744087523;
+		steps = 50;
+		for(let i=0;i<=steps;++i) {
+			re = fX + (i * (tX-fX)/steps);
+			im = fY + (i * (tY-fY)/steps);
+			document.getElementById("output").value += "{ x: " +re+ ", y: " +im+ " },\n";
+			yData.push({re,im});
+		}
+
+		return yData;
+
+		
+    }
+
+
+
+});
+</script>
+
+</head>
+<body>
+
+<canvas id="fourier" width=800 height=800></canvas>
+<textarea id="output" cols=100 rows=15></textarea>
+
+</body>
+</html>

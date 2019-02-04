@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Discrete Fourier Transform Arbitrary Signal</title>
+<style>
+	body {
+		background-color: #222;
+	}
+	#fourier {
+		margin:0 auto;
+		background-color: #000;
+		display: block;
+	}
+</style>
+<script src="train.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function(event) { 
+
+	const TWOPI = 2 * Math.PI;
+
+ 	const CWIDE = 800;
+	const CHIGH = 800;
+
+	const canvas=document.getElementById("fourier");
+	const ctx=canvas.getContext("2d");
+
+	let time=0;
+	let path = [];
+
+	let data = [];
+	for(let i=0;i<drawing.length;i+=4) {
+		let re = drawing[i].x;
+		let im = drawing[i].y;
+		data.push({re,im});
+	}
+	let fourierData = discreteFourierTransform(data);
+	fourierData.sort((a,b) => b.amp - a.amp);
+
+	// https://en.wikipedia.org/wiki/Discrete_Fourier_transform
+	function discreteFourierTransform(x) {
+		let X = [];
+		const N = x.length;
+		for(let k=0; k<N; ++k) {
+			let sum = {re:0,im:0};
+			for(let n=0; n<N; ++n) {
+				let theta = (TWOPI * k * n) / N; 
+				let c = {re: Math.cos(theta), im: -1 * Math.sin(theta)};
+				sum.re += x[n].re * c.re - x[n].im * c.im;
+				sum.im += x[n].re * c.im + x[n].im * c.re;
+			}
+			sum.re = sum.re / N;
+			sum.im = sum.im / N;
+			let freq = k;
+			let amp = Math.sqrt(sum.re*sum.re+sum.im*sum.im);
+			let phase = Math.atan2(sum.im, sum.re);
+			X[k] = {re:sum.re,im:sum.im,freq,amp,phase};
+		}
+		return X;
+	}
+
+
+	function epicycles(x,y,fourier)	{
+		for(let i=0; i<fourier.length; ++i) {
+			let cntrX = x;
+			let cntrY = y;
+			let freq = fourier[i].freq;
+			let phase = fourier[i].phase;
+			let radius = fourier[i].amp;
+			x += radius * Math.cos(freq * time + phase);
+			y += radius * Math.sin(freq * time + phase);
+	
+			ctx.lineWidth = 1;
+
+			// Draw Circle
+			ctx.beginPath();
+			ctx.arc(cntrX,cntrY,radius,0,TWOPI);
+			ctx.strokeStyle = '#444444';
+			ctx.stroke();
+
+			// Draw Line to x,y
+			ctx.beginPath();
+			ctx.moveTo(cntrX, cntrY);
+			ctx.lineTo(x, y);
+			ctx.strokeStyle = '#888888';
+			ctx.stroke();
+		}
+		return {x,y};
+	}
+
+
+	function main() {
+		requestAnimationFrame(main);
+ 
+		// Clear the canvas
+		ctx.clearRect(0,0, canvas.width, canvas.height);
+		
+		let v = epicycles(CWIDE/2,CHIGH/2,fourierData);	
+		path.unshift(v);
+
+		// draw path
+		ctx.beginPath();
+		for(let i=0; i<path.length;++i) {
+		 	ctx.lineTo(path[i].x, path[i].y);
+		}
+		ctx.lineWidth = 2;
+		ctx.strokeStyle = '#8888ff';
+		ctx.stroke();
+
+		let dt = TWOPI / fourierData.length
+		time += dt;
+		if (time > TWOPI) {
+			path = [];
+			time = 0;
+		}
+
+	}
+
+    main();	
+});
+</script>
+
+</head>
+<body>
+
+<canvas id="fourier" width=800 height=800></canvas>
+
+</body>
+</html>
