@@ -35,12 +35,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	let data = [];
 	data = drawY();
 
-	// for(let i=0;i<ydata.length;++i) {
-	// 	let re = ydata[i].x;
-	// 	let im = ydata[i].y;
-	// 	data.push({re,im});
-	// }
-	
 	let fourierData = discreteFourierTransform(data);
 	fourierData.sort((a,b) => b.amp - a.amp);
 
@@ -138,7 +132,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		let tY;
 
 		// OUTER
-		steps = 200;
+		steps = 80;
 		start = 0.360;
 		for(let i=0;i<=steps;++i) {
 			let v = i * (TWOPI/steps) -start;
@@ -150,7 +144,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		}
 
 		// INNER
-		steps = 200;
+		steps = 70;
 		start = 0.360;
 		for(let i=0;i<=steps;++i) {
 			let v = i * (TWOPI/steps) -start;
@@ -162,7 +156,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		}
 
 		// OUTER Y - bottom
-		steps = 100;
+		steps = 25;
 		start = 0.360;
 		for(let i=0;i<=steps;++i) {
 			let v = i * ((TWOPI/8.43)/steps) -start;
@@ -175,7 +169,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		// LINE
 		fX = 124.03737409623217; fY = 181.6277250209618;
 		tX = 109.6175651957163; tY = 128.39691519432472;
-		steps = 50;
+		steps = 10;
 		for(let i=0;i<=steps;++i) {
 			re = fX + (i * (tX-fX)/steps);
 			im = fY + (i * (tY-fY)/steps);
@@ -184,7 +178,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		}
 
 		// INNER Y - bottom right
-		steps = 50;
+		steps = 10;
 		start = -0.41;
 		for(let i=0;i<=steps;++i) {
 			let v = -i * ((TWOPI/33)/steps) -start;
@@ -197,7 +191,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		// LINE
 		fX = 59.905912329345924; fY = 136.63783925617415;
 		tX = 60; tY = 60;
-		steps = 50;
+		steps = 10;
 		for(let i=0;i<=steps;++i) {
 			re = fX + (i * (tX-fX)/steps);
 			im = fY + (i * (tY-fY)/steps);
@@ -208,7 +202,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		// LINE
 		fX = 60; fY = 60;
 		tX = 195.03863230538119; tY = -98.69660768739209;
-		steps = 70;
+		steps = 20;
 		for(let i=0;i<=steps;++i) {
 			re = fX + (i * (tX-fX)/steps);
 			im = fY + (i * (tY-fY)/steps);
@@ -217,7 +211,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		}
 
 		// INNER Y - top right outer
-		steps = 50;
+		steps = 10;
 		start = 3.93;
 		for(let i=0;i<=steps;++i) {
 			let v = -i * ((TWOPI/25)/steps) -start;
@@ -230,7 +224,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		// LINE
 		fX = 237.12422975673766; fY = -70.90285785011277;
 		tX = 268.12105778303476; tY = -114.26365670022278;
-		steps = 50;
+		steps = 10;
 		for(let i=0;i<=steps;++i) {
 			re = fX + (i * (tX-fX)/steps);
 			im = fY + (i * (tY-fY)/steps);
@@ -239,7 +233,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		}
 
 		// OUTER Y - Top right
-		steps = 100;
+		steps = 20;
 		start = 4.090;
 		for(let i=0;i<=steps;++i) {
 			let v = i * ((TWOPI/9.4)/steps) -start;
@@ -252,7 +246,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		// LINE
 		fX = 91.19209223547674; fY = -188.3677662490331;
 		tX = 84.78299215926154; tY = -133.18040444123335;
-		steps = 50;
+		steps = 10;
 		for(let i=0;i<=steps;++i) {
 			re = fX + (i * (tX-fX)/steps);
 			im = fY + (i * (tY-fY)/steps);
@@ -261,7 +255,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		}
 
 		// INNER Y - top right inner
-		steps = 50;
+		steps = 10;
 		start = 3.455;
 		for(let i=0;i<=steps;++i) {
 			let v = -i * ((TWOPI/33)/steps) -start;
@@ -274,7 +268,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		// LINE
 		fX = 132.75980481136858; fY = -122.60515140719707;
 		tX = 32; tY = 0;
-		steps = 70;
+		steps = 20;
 		for(let i=0;i<=steps;++i) {
 			re = fX + (i * (tX-fX)/steps);
 			im = fY + (i * (tY-fY)/steps);
@@ -285,7 +279,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		// LINE
 		fX = 32; fY = 0;
 		tX = -79.3198053124048; tY = -134.04989929731147;
-		steps = 70;
+		steps = 20;
 		for(let i=0;i<=steps;++i) {
 			re = fX + (i * (tX-fX)/steps);
 			im = fY + (i * (tY-fY)/steps);
@@ -294,7 +288,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		}
 
 		// INNER Y - top left inner
-		steps = 50;
+		steps = 10;
 		start = 2.849;
 		for(let i=0;i<=steps;++i) {
 			let v = -i * ((TWOPI/38)/steps) -start;
@@ -307,7 +301,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		// LINE
 		fX = -34.89820605856506; fY = -138.86812619159437;
 		tX = -40.02677416010782; tY = -194.55287647436367;
-		steps = 50;
+		steps = 10;
 		for(let i=0;i<=steps;++i) {
 			re = fX + (i * (tX-fX)/steps);
 			im = fY + (i * (tY-fY)/steps);
@@ -316,7 +310,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		}
 
 		// OUTER Y - Top left
-		steps = 100;
+		steps = 20;
 		start = 3.020;
 		for(let i=0;i<=steps;++i) {
 			let v = i * ((TWOPI/7.5)/steps) -start;
@@ -329,7 +323,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		// LINE
 		fX = -270.21027197612665; fY = -112.51414705525184;
 		tX = -238.07376905390518; tY = -70.07332712617422;
-		steps = 50;
+		steps = 10;
 		for(let i=0;i<=steps;++i) {
 			re = fX + (i * (tX-fX)/steps);
 			im = fY + (i * (tY-fY)/steps);
@@ -338,7 +332,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		}
 
 		// INNER Y - top left outer
-		steps = 50;
+		steps = 10;
 		start = 2.095;
 		for(let i=0;i<=steps;++i) {
 			let v = -i * ((TWOPI/26)/steps) -start;
@@ -352,7 +346,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		// LINE
 		fX = -198.2154042333766; fY = -97.0424672536357;
 		tX = -55; tY = 65;
-		steps = 70;
+		steps = 20;
 		for(let i=0;i<=steps;++i) {
 			re = fX + (i * (tX-fX)/steps);
 			im = fY + (i * (tY-fY)/steps);
@@ -363,7 +357,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		// LINE
 		fX = -55; fY = 65;
 		tX = -55.980968973813944; tY = 137.0685378327307;
-		steps = 50;
+		steps = 10;
 		for(let i=0;i<=steps;++i) {
 			re = fX + (i * (tX-fX)/steps);
 			im = fY + (i * (tY-fY)/steps);
@@ -372,7 +366,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		}
 
 		// INNER Y - bottom left
-		steps = 50;
+		steps = 10;
 		start = 0.205;
 		for(let i=0;i<=steps;++i) {
 			let v = -i * ((TWOPI/33)/steps) -start;
@@ -385,7 +379,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		// LINE
 		fX = -105.9236600828484; fY = 129.19798342459217;
 		tX = -116.25049698077969; tY = 183.43577744087523;
-		steps = 50;
+		steps = 10;
 		for(let i=0;i<=steps;++i) {
 			re = fX + (i * (tX-fX)/steps);
 			im = fY + (i * (tY-fY)/steps);
