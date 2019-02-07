@@ -131,30 +131,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		let tX;
 		let tY;
 
-		// OUTER
-		steps = 80;
-		start = 0.360;
-		for(let i=0;i<=steps;++i) {
-			let v = i * (TWOPI/steps) -start;
-			let re = 390 * Math.sin(v);
-			let im = 262 * Math.cos(v);
-
-			document.getElementById("output").value += "{ x: " +re+ ", y: " +im+ " },\n";
-			yData.push({re,im});
-		}
-
-		// INNER
-		steps = 70;
-		start = 0.360;
-		for(let i=0;i<=steps;++i) {
-			let v = i * (TWOPI/steps) -start;
-			let re = 365 * Math.sin(v);
-			let im = 235 * Math.cos(v);
-			document.getElementById("output").value += "{ x: " +re+ ", y: " +im+ " },\n";
-			yData.push({re,im});
-
-		}
-
 		// OUTER Y - bottom
 		steps = 25;
 		start = 0.360;
@@ -383,6 +359,31 @@ document.addEventListener("DOMContentLoaded", function(event) {
 		for(let i=0;i<=steps;++i) {
 			re = fX + (i * (tX-fX)/steps);
 			im = fY + (i * (tY-fY)/steps);
+			document.getElementById("output").value += "{ x: " +re+ ", y: " +im+ " },\n";
+			yData.push({re,im});
+		}
+
+
+		// INNER
+		steps = 70;
+		start = 0.360;
+		for(let i=0;i<=steps;++i) {
+			let v = i * (TWOPI/steps) -start;
+			let re = 365 * Math.sin(v);
+			let im = 235 * Math.cos(v);
+			document.getElementById("output").value += "{ x: " +re+ ", y: " +im+ " },\n";
+			yData.push({re,im});
+
+		}
+
+		// OUTER
+		steps = 80;
+		start = 0.360;
+		for(let i=0;i<=steps;++i) {
+			let v = i * (TWOPI/steps) -start;
+			let re = 390 * Math.sin(v);
+			let im = 262 * Math.cos(v);
+
 			document.getElementById("output").value += "{ x: " +re+ ", y: " +im+ " },\n";
 			yData.push({re,im});
 		}
